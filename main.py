@@ -8,8 +8,8 @@ from matplotlib import font_manager, rcParams
 
 target_year = 2024
 target_month = 9
-member_list = ["REDACTED", "REDACTED"]
-pitch_list = ["영덕", "보정", "상하"]
+member_list = ["A", "B", "C", "D"]
+pitch_list = ["1", "2", "3"]
 
 def get_date_by_day(target_day):
     return [day for day, weekday in calendar.Calendar().itermonthdays2(target_year, target_month) if
