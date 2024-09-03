@@ -18,23 +18,33 @@ def plot_calendar(df, year, month, weekday_times):
                 weekday = calendar.day_name[(day_idx + 6) % 7]
                 matches = df[df['date'] == pd.Timestamp(f"{year}-{month:02d}-{day:02d}")]
 
+                if weekday == 'Saturday':
+                    color = 'blue'
+                elif weekday == 'Sunday':
+                    color = 'red'
+                else:
+                    color = 'black'
+
                 if not matches.empty:
                     event_time = weekday_times.get(weekday, "")
                     event_lines = [f"{row['stadium']} ({row['booked_by']})" for idx, row in matches.iterrows()]
                     event_info = "\n".join(event_lines)
-                    color = "black"
+
+                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='bold', fontsize=12)
+
                 else:
                     event_time = ""
                     event_info = ""
-                    color = "grey"
+                    if weekday != 'Sunday' or weekday != 'Saturday':
+                        color = 'grey'
 
-                ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='bold', fontsize=12)
+                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='light' , fontsize=11)
 
                 if event_time:
-                    ax.text(day_idx, -week_idx + 0.1, event_time, ha='center', va='center', color=color, fontsize=10)
+                    ax.text(day_idx, -week_idx + 0.1, event_time, ha='center', va='center', color='black', fontsize=10)
 
                 if event_info:
-                    ax.text(day_idx, -week_idx - 0.2, event_info, ha='center', va='center', color=color, fontsize=13)
+                    ax.text(day_idx, -week_idx - 0.2, event_info, ha='center', va='center', color='black', fontsize=13)
 
                 ax.add_patch(Rectangle((day_idx - 0.5, -week_idx - 0.5), 1, 1, fill=False, edgecolor='black'))
 
