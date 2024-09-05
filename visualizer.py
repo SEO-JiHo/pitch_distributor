@@ -3,11 +3,13 @@ import pandas as pd
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+from config import WEEKDAY_TIMES
 
 
 rcParams['font.family'] = 'NanumBarunGothic'
 
-def plot_calendar(df, year, month, weekday_times):
+
+def plot_calendar(df, year, month):
     cal = calendar.Calendar(firstweekday=6).monthdayscalendar(year, month)
 
     fig, ax = plt.subplots(figsize=(12, 8))
@@ -26,27 +28,34 @@ def plot_calendar(df, year, month, weekday_times):
                     color = 'black'
 
                 if not matches.empty:
-                    event_time = weekday_times.get(weekday, "")
+                    # for idx, row in matches.iterrows():
+                    #     if pd.notna(row.get('time')):
+                    #         specific_time = row['time']
+                    #         event_lines = [f"{row['stadium']} ({row['booked_by']}) \n{specific_time}"]
+
                     event_lines = [f"{row['stadium']} ({row['booked_by']})" for idx, row in matches.iterrows()]
                     event_info = "\n".join(event_lines)
 
+                    event_time_str = WEEKDAY_TIMES.get(weekday, "")
+
                     ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='bold', fontsize=12)
+                    ax.text(day_idx, -week_idx + 0.15, event_time_str, ha='center', va='center', color='black', fontsize=10)
+
+                    ax.text(day_idx, -week_idx - 0.1, event_info, ha='center', va='center', color='black', fontsize=13)
+
+                    for _, row in matches.iterrows():
+                        if pd.notna(row.get('time')):
+                            specific_time = row['time']
+                            ax.text(day_idx, -week_idx - 0.4, f"({specific_time})", ha='center', va='center', color='black', fontsize=10)
 
                 else:
-                    event_time = ""
-                    event_info = ""
-                    if weekday != 'Sunday' or weekday != 'Saturday':
+                    if weekday not in ['Sunday', 'Saturday']:
                         color = 'grey'
 
-                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='light' , fontsize=11)
-
-                if event_time:
-                    ax.text(day_idx, -week_idx + 0.1, event_time, ha='center', va='center', color='black', fontsize=10)
-
-                if event_info:
-                    ax.text(day_idx, -week_idx - 0.2, event_info, ha='center', va='center', color='black', fontsize=13)
+                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='light', fontsize=11)
 
                 ax.add_patch(Rectangle((day_idx - 0.5, -week_idx - 0.5), 1, 1, fill=False, edgecolor='black'))
+
 
     ax.xaxis.set_ticks_position('top')
     ax.set_xticks(range(7))
