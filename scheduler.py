@@ -1,7 +1,4 @@
 import calendar
-import pandas as pd
-from numpy.ma.core import minimum
-
 from config import *
 
 
