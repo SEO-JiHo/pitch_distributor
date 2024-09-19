@@ -28,11 +28,6 @@ def plot_calendar(df, year, month):
                     color = 'black'
 
                 if not matches.empty:
-                    # for idx, row in matches.iterrows():
-                    #     if pd.notna(row.get('time')):
-                    #         specific_time = row['time']
-                    #         event_lines = [f"{row['stadium']} ({row['booked_by']}) \n{specific_time}"]
-
                     event_lines = [f"{row['stadium']} ({row['booked_by']})" for idx, row in matches.iterrows()]
                     event_info = "\n".join(event_lines)
 

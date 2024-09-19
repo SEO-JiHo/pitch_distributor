@@ -6,10 +6,10 @@ import pandas as pd
 
 
 #1
-# distributed_list = distributor()
+distributed_list = distributor()
 
 #2
-distributed_list = final_schedule
+# distributed_list = final_schedule
 
 data = {
     "date": [f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{day:02d}" for day, _, _, _ in distributed_list],
