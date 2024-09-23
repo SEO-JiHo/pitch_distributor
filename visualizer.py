@@ -3,8 +3,7 @@ import pandas as pd
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from config import WEEKDAY_TIMES
-
+from config import WEEKDAY_TIMES, holidays
 
 rcParams['font.family'] = 'NanumBarunGothic'
 
@@ -18,11 +17,14 @@ def plot_calendar(df, year, month):
         for day_idx, day in enumerate(week):
             if day != 0:
                 weekday = calendar.day_name[(day_idx + 6) % 7]
-                matches = df[df['date'] == pd.Timestamp(f"{year}-{month:02d}-{day:02d}")]
+                day_str = f"{year}-{month:02d}-{day:02d}"
+                matches = df[df['date'] == pd.Timestamp(day_str)]
+
+                is_holiday = day_str in holidays
 
                 if weekday == 'Saturday':
                     color = 'blue'
-                elif weekday == 'Sunday':
+                elif weekday == 'Sunday' or is_holiday:
                     color = 'red'
                 else:
                     color = 'black'
@@ -41,10 +43,10 @@ def plot_calendar(df, year, month):
                     for _, row in matches.iterrows():
                         if pd.notna(row.get('time')):
                             specific_time = row['time']
-                            ax.text(day_idx, -week_idx - 0.4, f"({specific_time})", ha='center', va='center', color='black', fontsize=10)
+                            ax.text(day_idx, -week_idx - 0.3, f"({specific_time})", ha='center', va='center', color='black', fontsize=10)
 
                 else:
-                    if weekday not in ['Sunday', 'Saturday']:
+                    if weekday not in ['Sunday', 'Saturday'] and not is_holiday:
                         color = 'grey'
 
                     ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='light', fontsize=11)
