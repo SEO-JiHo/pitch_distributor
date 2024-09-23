@@ -2,16 +2,9 @@ import calendar
 from config import *
 
 
-
 def get_date_by_day(target_day):
     return [day for day, weekday in calendar.Calendar().itermonthdays2(TARGET_YEAR, TARGET_MONTH) if
             weekday == target_day and day != 0]
-
-mondays = get_date_by_day(calendar.MONDAY)
-thursdays = get_date_by_day(calendar.THURSDAY)
-sundays = get_date_by_day(calendar.SUNDAY)
-
-all_days = mondays + thursdays + sundays
 
 def set_pitch(days, pitches):
     day_with_pitch = []
@@ -27,13 +20,17 @@ def set_biweekly_pitch(days, pitch1, pitch2):
         day_with_pitch.append((day, pitch))
     return day_with_pitch
 
-monday_pitch = set_pitch(mondays, [PITCH_LIST[0]])
-thursday_pitch = set_pitch(thursdays, [PITCH_LIST[1]])
-sunday_pitch = set_biweekly_pitch(sundays, PITCH_LIST[1], PITCH_LIST[2])
+all_days = []
+all_days_with_pitch = []
 
-all_days_with_pitch = monday_pitch + thursday_pitch + sunday_pitch
+for day_index, pitches, method in TARGET_DAY:
+    specific_days = get_date_by_day(day_index)
+    all_days += specific_days
 
-print(all_days_with_pitch)
+    if method == 0:
+        all_days_with_pitch += set_pitch(specific_days, pitches)
+    else:
+        all_days_with_pitch += set_biweekly_pitch(specific_days, pitches[0], pitches[1])
 
 k_day = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"]
 
@@ -49,7 +46,7 @@ def distributor():
     # 첫 번째 분배
     for day, pitch in all_days_with_pitch:
         for member in MEMBER_LIST:
-            minimum_num = len(all_days) // len(MEMBER_LIST)
+            minimum_num = len(all_days_with_pitch) // len(MEMBER_LIST)
 
             if minimum_num > 3:
                 raise ValueError("예약 인원이 부족합니다.")
@@ -89,7 +86,6 @@ def distributor():
         raise ValueError(f"예약 인원이 부족합니다. {len(get_unassigned_pitch(all_days_with_pitch, schedule))}개 누락")
 
     print(f"{TARGET_YEAR}년 {TARGET_MONTH}월")
-    print(f"월요일 {len(mondays)}일, 목요일 {len(thursdays)}일, 일요일 {len(sundays)}일")
     print(f"총 {len(all_days)}일, {len(all_days_with_pitch)}개 예약 필요\n")
 
     for date, pitch, member, _ in schedule:
