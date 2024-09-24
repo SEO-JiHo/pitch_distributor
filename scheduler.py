@@ -25,6 +25,9 @@ all_days_with_pitch = []
 
 for day_index, pitches, method in TARGET_DAY:
     specific_days = get_date_by_day(day_index)
+
+    specific_days = [day for day in specific_days if day not in exclude_dates]
+
     all_days += specific_days
 
     if method == 0:
@@ -49,7 +52,7 @@ def distributor():
             minimum_num = len(all_days_with_pitch) // len(MEMBER_LIST)
 
             if minimum_num > 3:
-                raise ValueError("예약 인원이 부족합니다.")
+                print("예약 인원이 부족합니다.")
 
             if sum(assignments[member]) < minimum_num:
                 pitch_index = PITCH_LIST.index(pitch)
@@ -69,7 +72,7 @@ def distributor():
             max_assignments = len(unassigned_pitch) // len(MEMBER_LIST) + 1
 
         for day, pitch in unassigned_pitch:
-            for member in MEMBER_LIST:
+             for member in MEMBER_LIST:
                 if sum(assignments[member]) - first_total_assignments[member] < max_assignments:
                     pitch_index = PITCH_LIST.index(pitch)
 
@@ -83,7 +86,8 @@ def distributor():
 
     #출력
     if len(get_unassigned_pitch(all_days_with_pitch, schedule)) > 0:
-        raise ValueError(f"예약 인원이 부족합니다. {len(get_unassigned_pitch(all_days_with_pitch, schedule))}개 누락")
+        print(f"예약 인원이 부족합니다. {len(get_unassigned_pitch(all_days_with_pitch, schedule))}개 누락")
+        print(all_days)
 
     print(f"{TARGET_YEAR}년 {TARGET_MONTH}월")
     print(f"총 {len(all_days)}일, {len(all_days_with_pitch)}개 예약 필요\n")
