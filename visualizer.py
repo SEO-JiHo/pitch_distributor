@@ -30,20 +30,19 @@ def plot_calendar(df, year, month):
                     color = 'black'
 
                 if not matches.empty:
-                    event_lines = [f"{row['stadium']} ({row['booked_by']})" for idx, row in matches.iterrows()]
-                    event_info = "\n".join(event_lines)
+                    for idx, row in matches.iterrows():
+                        event_pitch = row['stadium']
+                        event_holder = f"({row['booked_by']})"
 
-                    event_time_str = WEEKDAY_TIMES.get(weekday, "")
+                        if pd.isna(row['time']):
+                            event_time_str = WEEKDAY_TIMES.get(weekday, "")
+                        else:
+                            event_time_str = row['time']
 
-                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontweight='bold', fontsize=12)
-                    ax.text(day_idx, -week_idx + 0.15, event_time_str, ha='center', va='center', color='black', fontsize=10)
-
-                    ax.text(day_idx, -week_idx - 0.1, event_info, ha='center', va='center', color='black', fontsize=13)
-
-                    for _, row in matches.iterrows():
-                        if pd.notna(row.get('time')):
-                            specific_time = row['time']
-                            ax.text(day_idx, -week_idx - 0.3, f"({specific_time})", ha='center', va='center', color='black', fontsize=10)
+                    ax.text(day_idx, -week_idx + 0.3, f"{day}", ha='center', va='center', color=color, fontsize=12)
+                    ax.text(day_idx, -week_idx + 0.1, event_pitch, ha='center', va='center', color='black', fontweight='bold', fontsize=13)
+                    ax.text(day_idx, -week_idx - 0.1, event_time_str, ha='center', va='center', color='black', fontweight='bold', fontsize=11)
+                    ax.text(day_idx, -week_idx - 0.3, event_holder, ha='center', va='center', color='black', fontsize=11)
 
                 else:
                     if weekday not in ['Sunday', 'Saturday'] and not is_holiday:
